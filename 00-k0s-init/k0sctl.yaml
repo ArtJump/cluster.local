@@ -1,0 +1,40 @@
+apiVersion: k0sctl.k0sproject.io/v1beta1
+kind: Cluster
+metadata:
+  name: k0stya
+spec:
+  hosts:
+    - role: controller+worker
+      ssh:
+        address: 192.168.1.10
+        user: k0s
+        port: 22
+      installFlags:
+      - --single
+  k0s:
+    version: v1.34.5+k0s.0
+    config:
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        name: k0stya
+      spec:
+        api:
+          address: 192.168.1.10
+          port: 6443
+          k0sApiPort: 9443
+          sans:
+            - 192.168.1.10
+            - 127.0.0.1
+            - rpi.lan
+        storage:
+          type: kine
+        network:
+          provider: kuberouter
+          podCIDR: 10.244.0.0/16
+          serviceCIDR: 10.96.0.0/12
+          clusterDomain: cluster.local
+          kubeProxy:
+            mode: iptables
+        telemetry:
+          enabled: false
